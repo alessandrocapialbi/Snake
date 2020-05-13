@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Snake</title>
+</head>
+
+<body>
+<!-- It creates the grid where the game will be played.-->
+<canvas id="gc" width="400" height="400"></canvas>
+<script>
+
+    //This is going to be run as soon as the page is loaded.
+    window.onload=function() {
+
+        //It gets the canvas element declared in the body.
+        canv = document.getElementById("gc");
+        //It sets a 2d model.
+        ctx = canv.getContext("2d");
+        //It adds a listener in order to catch when a key is pressed.
+        document.addEventListener("keydown", keyPush);
+        setInterval(game, 1000/20); /*It calls the function every 50ms
+        which let you play and it sets the snake's speed.
+        */
+    }
+    px=py=10; //This is the initial snake's position on x and y.
+    gs=tc=20; //This is the size of the apple and snake blocks.
+    ax=ay=15; //This is the initial apple's position on x and y.
+    xv=yv=0; //These are x and y updated when the user moves the snake.
+    trail=[]; //This records the snake's size.
+    tail = 5; //The snake will start off with a 5 blocks long tail.
+
+    function game() {
+        px+=xv; //It lets to get the snake move when the user presses one of the directional arrows.
+        py+=yv;
+
+        //These statements check if the snake hit the boundary in order to display it correctly.
+        if(px<0) {
+            px = tc-1;
+        }
+        if(px>tc-1) {
+            px = 0;
+        }
+        if(py<0) {
+            py= tc-1;
+        }
+        if(py>tc-1) {
+            py= 0;
+        }
+        ctx.fillStyle="black"; //It sets a black background color.
+        ctx.fillRect(0, 0, canv.width, canv.height); /*It paints the black rectangle
+        on canvas (x, y, width, height).*/
+        ctx.fillStyle="lime"; //It sets the snake's color.
+        for(let i=0;i<trail.length;i++) { //It paints the snake on canvas.
+            ctx.fillRect(trail[i].x*gs,trail[i].y*gs,gs-2,gs-2);
+            if(trail[i].x==px && trail[i].y==py) { /*When the snake hit itself, x and y are the same of
+            a part of the snake, so the tail is being reset.*/
+                tail = 5;
+            }
+        }
+        trail.push({x:px,y:py}); //It adds new elements to the array, so another block to the snake.
+        while(trail.length>tail) {
+            trail.shift(); /*It removes the first item of the array
+            in order to set the right tail's length when the array's length is greater than the tail.*/
+        }
+
+        if(ax==px && ay==py) { //When the snake eats the apple its size increases.
+            tail++;
+            ax=Math.floor(Math.random()*tc); //The next position of the apple is random.
+            ay=Math.floor(Math.random()*tc);
+        }
+        ctx.fillStyle="red"; //It sets the apple's color.
+        ctx.fillRect(ax*gs,ay*gs,gs-2,gs-2); //It paints the apple on canvas.
+    }
+
+    function keyPush(evt) { /*It's the function which is called
+                              when the user presses one of the directional arrows.*/
+        switch(evt.keyCode) {
+            case 37:
+                xv=-1;yv=0;
+                break;
+            case 38:
+                xv=0;yv=-1;
+                break;
+            case 39:
+                xv=1;yv=0;
+                break;
+            case 40:
+                xv=0;yv=1;
+                break;
+        }
+    }
+</script>
+
+
+</body>
+</html>
